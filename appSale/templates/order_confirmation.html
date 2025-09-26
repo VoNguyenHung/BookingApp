@@ -1,0 +1,36 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Đơn hàng của bạn - Trà Sữa OU{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm text-center p-5">
+        <div class="card-body">
+            <i class="fas fa-check-circle text-success mb-4" style="font-size: 80px;"></i>
+            <h2 class="card-title themed-heading mb-3">Đặt hàng thành công!</h2>
+            <p class="card-text lead">Cảm ơn bạn đã đặt món tại Trà Sữa OU.</p>
+            <p class="card-text">Mã đơn hàng của bạn: <strong class="themed-heading">{{ order.id }}</strong></p>
+            <p class="card-text">Tổng tiền: <strong class="themed-heading">{{ "{:,.0f}".format(order.total_amount) }} VNĐ</strong></p>
+            <p class="card-text">Trạng thái: <strong>{{ order.status }}</strong></p>
+            <p class="card-text">Phương thức thanh toán: <strong>{{ order.payment_method }}</strong></p>
+            <p class="card-text">Ngày đặt hàng: <strong>{{ order.order_date.strftime('%H:%M %d/%m/%Y') }}</strong></p>
+
+            {% if order.payment_method == 'BankTransfer' %}
+            <div class="alert alert-info mt-4" role="alert" style="max-width: 500px; margin: auto;">
+                <h5 class="alert-heading">Thông tin chuyển khoản:</h5>
+                <p>Vui lòng chuyển khoản số tiền **{{ "{:,.0f}".format(order.total_amount) }} VNĐ** đến tài khoản sau:</p>
+                <p><strong>Ngân hàng:</strong> Vietcombank</p>
+                <p><strong>Số tài khoản:</strong> 1234567890</p>
+                <p><strong>Chủ tài khoản:</strong> Cửa hàng Trà Sữa OU</p>
+                <p><strong>Nội dung chuyển khoản:</strong> TSOU-{{ order.id }} (Để chúng tôi dễ dàng xác nhận đơn hàng của bạn)</p>
+            </div>
+            {% endif %}
+
+            <hr class="my-4">
+
+            <p class="card-text">Đơn hàng của bạn đang được chuẩn bị và sẽ được giao trong thời gian sớm nhất!</p>
+            <a href="/" class="btn btn-primary mt-3">Tiếp tục đặt món khác</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

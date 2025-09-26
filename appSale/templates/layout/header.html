@@ -1,0 +1,71 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light py-3 fixed-top shadow">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <span class="fw-bold fs-4 themed-heading">TRÀ SỮA OU</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Trang chủ</a>
+                    </li>
+                    {% for c in categories %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?cate_id={{c.id}}">{{ c.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <ul class="navbar-nav d-flex align-items-center">
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative" href="/cart">
+                            <i class="fas fa-shopping-cart fa-lg"></i>
+                            Giỏ hàng
+                        </a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if current_user.avatar %}
+                                <img src="{{ current_user.avatar }}" alt="Avatar" class="rounded-circle me-1" style="width: 30px; height: 30px; object-fit: cover;">
+                                {% else %}
+                                <i class="fa fa-user me-1" style="color:black; font-size: 1.25rem;"></i>
+                                {% endif %}
+                                <span class="navbar-profile-name d-none d-lg-block">{{ current_user.name }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="/profile">Thông tin cá nhân</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-primary" href="{{ url_for('user_login') }}">
+                                Đăng nhập
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-bar bg-light py-2 fixed-top-2 shadow-sm">
+        <div class="container">
+            <form class="d-flex" action="{{ url_for('index') }}" method="get">
+                <div class="input-group">
+                    <input class="form-control form-control-sm" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search" name="kw">
+                    <button class="btn btn-primary btn-sm" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</header>

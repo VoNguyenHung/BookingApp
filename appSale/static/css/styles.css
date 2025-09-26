@@ -1,0 +1,355 @@
+body {
+    padding-top: 80px; /* Điều chỉnh giá trị này */
+}
+.navbar-brand .themed-heading {
+    color: #ff6f61; /* Đảm bảo màu logo nhất quán */
+}
+
+.nav-link {
+    font-weight: 600;
+    margin-right: 10px;
+    color: #333;
+    font-size: 1.05rem;
+
+}
+
+.nav-link:hover {
+    color: #ff6f61 !important;
+}
+
+.input-group {
+    width: 200px; /* Giảm chiều rộng của thanh tìm kiếm */
+}
+
+.input-group .form-control {
+    border-radius: 20px 0 0 20px;
+    border-color: #ddd;
+}
+
+.input-group .btn {
+    background-color: #fff;
+    border-color: #ddd;
+    border-radius: 0 20px 20px 0;
+}
+
+.input-group .btn:hover {
+    background-color: #f8f9fa;
+}
+
+.nav-link .fa-shopping-cart {
+    color: #ff6f61; /* Đổi màu icon giỏ hàng */
+}
+.fixed-top-2 {
+    top: 60px; /* Điều chỉnh để nó nằm ngay dưới navbar, có thể cần thay đổi tùy vào chiều cao của navbar */
+    left: 0;
+    right: 0;
+    z-index: 1020; /* Đảm bảo nó luôn ở trên nội dung khác */
+}
+
+/* Tùy chỉnh input group để đẹp hơn */
+.search-bar .input-group {
+    max-width: 500px;
+    margin: 0 auto; /* Căn giữa */
+}
+
+.search-bar .form-control {
+    border-radius: 20px 0 0 20px;
+    border-color: #ddd;
+}
+
+.search-bar .btn {
+    border-radius: 0 20px 20px 0;
+}
+
+    /* --- CSS MỚI CHO THẺ SẢN PHẨM (điều chỉnh theo hình mẫu mới) --- */
+    .product-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card .img-container {
+    width: 100%;
+    padding-top: 100%; /* Tỷ lệ 1:1 */
+    position: relative;
+    overflow: hidden;
+    background-color: #fcece5;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.product-card .product-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.product-card .card-body {
+    text-align: center;
+    padding: 1rem;
+}
+
+.product-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .card-text {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+    .product-card .card-text { /* Áp dụng cho giá */
+        font-size: 1rem; /* Kích thước chữ cho giá - Nhỏ hơn một chút */
+        font-weight: 500; /* Độ đậm cho giá */
+        color: #555; /* Màu giá tiền - Nhạt hơn một chút */
+        margin-top: auto;
+        margin-bottom: 15px;
+    }
+
+    .product-card .card-buttons {
+        display: flex;
+        justify-content: space-around; /* Căn đều 2 nút */
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px; /* Khoảng cách giữa giá và nút */
+    }
+
+    .product-card .card-buttons .btn {
+        flex-grow: 1;
+        font-size: 0.85rem; /* Kích thước nút nhỏ hơn */
+        padding: 6px 10px; /* Giảm padding nút */
+        border-radius: 8px;
+    }
+    .product-card .card-buttons .btn-primary {
+        background-color: #ff6f61;
+        border-color: #ff6f61;
+    }
+    .product-card .card-buttons .btn-primary:hover {
+        background-color: #e65c53;
+        border-color: #e65c53;
+    }
+    .product-card .card-buttons .btn-outline-secondary {
+        color: #555;
+        border-color: #ddd;
+        background-color: transparent;
+    }
+    .product-card .card-buttons .btn-outline-secondary:hover {
+        color: #ff6f61;
+        border-color: #ff6f61;
+        background-color: #ffedeb;
+    }
+
+    .product-card .product-description {
+    font-size: 0.85rem; /* Kích thước chữ nhỏ hơn */
+    color: #777; /* Màu xám nhạt cho mô tả */
+    margin-bottom: 10px; /* Khoảng cách dưới mô tả */
+    line-height: 1.4;
+    max-height: 40px; /* Giới hạn chiều cao để chỉ hiển thị khoảng 2-3 dòng */
+    overflow: hidden; /* Ẩn phần văn bản tràn ra ngoài */
+    text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản bị cắt */
+    display: -webkit-box; /* Dùng cho Webkit (Chrome, Safari) */
+    -webkit-line-clamp: 2; /* Giới hạn chỉ 2 dòng */
+    -webkit-box-orient: vertical;
+}
+
+
+.auth-container {
+    max-width: 500px; /* Chiều rộng tối đa cho form */
+    margin: 50px auto; /* Căn giữa và tạo khoảng trống */
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 15px; /* Bo tròn góc */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Đổ bóng mạnh hơn một chút */
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: #ff6f61; /* Màu tiêu đề khớp với màu chủ đạo */
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.auth-container .form-control {
+    border-radius: 10px; /* Bo tròn input */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    box-shadow: none; /* Bỏ shadow mặc định của Bootstrap */
+}
+
+.auth-container .form-control:focus {
+    border-color: #ff6f61; /* Màu viền khi focus */
+    box-shadow: 0 0 0 0.25rem rgba(255, 111, 97, 0.25); /* Shadow khi focus */
+}
+
+.auth-container .btn-primary {
+    background-color: #ff6f61 !important; /* Màu nút chính */
+    border-color: #ff6f61;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-container .btn-primary:hover {
+    background-color: #e65c53;
+    border-color: #e65c53;
+}
+
+.auth-container .text-muted a {
+    color: #ff6f61; /* Màu liên kết */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-container .text-muted a:hover {
+    text-decoration: underline;
+}
+
+/* Flash messages */
+.alert {
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 12px 20px;
+}
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+/* Trong styles.css của bạn */
+.navbar-profile-name {
+    color: black; /* Đảm bảo màu trắng */
+    font-weight: bold; /* Tăng độ đậm */
+    font-size: 1rem;   /* Có thể điều chỉnh kích thước nếu cần, ví dụ 1rem */
+    /* text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); */ /* Tùy chọn: thêm đổ bóng chữ để nổi bật hơn */
+}
+
+.rounded-circle {
+    border: 3px solid #ff6f61; /* Pink border around avatar */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific card body padding for profile page */
+.card-body-profile {
+    padding: 2rem; /* Increased padding for better spacing on profile */
+    text-align: center; /* Profile card body is centered */
+}
+
+/* Labels for form fields */
+.form-label {
+    color: #ff6f61; /* Primary theme color for labels */
+    font-weight: 600; /* Make labels a bit bolder */
+}
+
+/* List Group Item Styling - For purchase history */
+.list-group-item {
+    border-radius: 10px; /* Rounded corners for list items */
+    border: none; /* Remove default border */
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Lighter shadow than main card */
+    padding: 1.5rem;
+}
+
+.list-group-item h5.text-info {
+    color: #ff6f61 !important; /* Override Bootstrap's text-info with theme color */
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.list-group-item p {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #343a40; /* Changed from text-muted to dark text for better visibility */
+}
+
+.list-group-item h6 {
+    color: #343a40;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Badge Styling - Themed color for status badge */
+.badge.bg-themed {
+    background-color: #ff6f61 !important; /* Primary theme color for badge background */
+    color: white !important; /* White text for contrast */
+    font-size: 0.85em;
+    padding: 0.4em 0.7em;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+/* --- Common Form Control Styling (Applies to auth forms and profile forms) --- */
+.form-control {
+    border-radius: 10px; /* Rounded input fields */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    box-shadow: none; /* Remove default Bootstrap shadow */
+}
+
+.form-control:focus {
+    border-color: #ff6f61; /* Border color on focus */
+    box-shadow: 0 0 0 0.25rem rgba(255, 111, 97, 0.25); /* Shadow on focus */
+}
+
+/* --- Common Button Styling (Applies to all primary buttons) --- */
+.btn-primary {
+    background-color: #ff6f61 !important; /* Main button color - Added !important */
+    border-color: #ff6f61 !important; /* Added !important */
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #e65c53 !important; /* Added !important */
+    border-color: #e65c53 !important; /* Added !important */
+}
+
+/* Themed Heading Styles (shared, but relevant to profile) */
+.themed-heading {
+    color: #ff6f61; /* Primary theme color */
+    font-weight: 700;
+}
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    box-sizing: border-box; /* Rất quan trọng cho layout hiện đại */
+}
+.pagination .page-link {
+    color: #e65c53;
+}
+.pagination .page-link:hover {
+    background-color: #e65c53;
+}

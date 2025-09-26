@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Quản lý</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            padding-top: 40px; /* Để tránh navbar che nội dung */
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 56px;
+        }
+        .content-wrapper {
+            margin-left: 250px;
+        }
+        .sidebar .nav-link {
+            color: #fff; /* Màu chữ mặc định */
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: #ff6f61; /* Màu chữ khi hover hoặc active */
+            background-color: #495057; /* Màu nền khi hover hoặc active */
+            border-radius: 5px;
+        }
+
+        .sidebar .nav-link .fas {
+            color: #fff; /* Đảm bảo màu icon mặc định là trắng */
+        }
+
+        .sidebar .nav-link:hover .fas,
+        .sidebar .nav-link.active .fas {
+            color: #ff6f61; /* Đổi màu icon khi hover hoặc active */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Trang Nhân viên</a>
+            </div>
+    </nav>
+
+    <div class="sidebar d-flex flex-column p-3">
+        <h5 style="padding-top: 56px" class="text-white mt-3 mb-4">Xin chào, {{ current_user.name }}</h5>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{{ url_for('employee_orders') }}" class="nav-link text-white">
+                    <i class="fas fa-utensils me-2"></i> Làm món
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('create_order') }}" class="nav-link text-white">
+                    <i class="fas fa-shopping-cart me-2"></i> Đặt món
+                </a>
+            </li>
+            </ul>
+        <hr class="text-white">
+        <div class="dropdown">
+            <a href="{{ url_for('logout') }}" class="d-flex align-items-center text-white text-decoration-none" >
+                <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+
+    <div class="content-wrapper p-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

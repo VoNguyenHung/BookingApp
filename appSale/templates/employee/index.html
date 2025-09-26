@@ -1,0 +1,73 @@
+{% extends 'employee/base_NV.html' %}
+
+{% block title %}Quản lý Đơn hàng{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="themed-heading mb-4">Danh sách Đơn hàng Chờ xử lý</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if orders %}
+    <ul class="list-group">
+        {% for order in orders %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="order-details-col">
+                <h5>Đơn hàng #{{ order.id }}</h5>
+                <p class="mb-1">Khách hàng: **{{ order.user.name if order.user else "Khách vãng lai" }}**</p>
+                <p class="mb-1">Thời gian đặt: {{ order.order_date.astimezone(timezone('Asia/Ho_Chi_Minh')).strftime('%d-%m-%Y %H:%M') }}</p>
+
+                <p class="mb-1">**Các món:**</p>
+                <ul class="list-unstyled ms-3">
+                    {% for item in order.items %}
+                        <li>- {{ item.product.name }} (x{{ item.quantity }})</li>
+                    {% endfor %}
+                </ul>
+
+                <p class="mb-1">**Địa chỉ giao:** {{ order.delivery_address }}</p>
+                <p class="mb-1">**Tổng tiền:** {{ "{:,.0f} đ".format(order.total_amount) }}</p>
+            </div>
+
+            <div class="order-status-col text-end">
+                <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="post">
+                    <div class="mb-3">
+                        <label for="order-status-{{ order.id }}" class="form-label d-block text-start">Trạng thái Đơn:</label>
+                        <select name="order_status" id="order-status-{{ order.id }}" class="form-select">
+                            <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Chờ xử lý</option>
+                            <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Đang làm món</option>
+                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Đã giao</option>
+                            <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Đã hoàn thành</option>
+                            <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Đã hủy</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="payment-status-{{ order.id }}" class="form-label d-block text-start">Thanh toán:</label>
+                        <select name="payment_status" id="payment-status-{{ order.id }}" class="form-select">
+                            <option value="Unpaid" {% if order.payment_status == 'Unpaid' %}selected{% endif %}>Chưa thanh toán</option>
+                            <option value="Paid" {% if order.payment_status == 'Paid' %}selected{% endif %}>Đã thanh toán</option>
+                            <option value="Refunded" {% if order.payment_status == 'Refunded' %}selected{% endif %}>Đã hoàn tiền</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-2">
+                        <i class="fas fa-save"></i> Cập nhật
+                    </button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">
+        Hiện không có đơn hàng nào chờ xử lý.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Thanh toán đơn hàng - Trà Sữa OU{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1 class="text-center themed-heading mb-4">Hoàn tất đơn hàng của bạn</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title themed-heading mb-3">Thông tin giao hàng</h4>
+                    <form id="checkoutForm">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fullName" name="fullName" required
+                                   value="{{ current_user.name if current_user.is_authenticated else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required
+                                   value="{{ current_user.phone if current_user.is_authenticated and current_user.phone else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="address" name="address" required
+                                   value="{{ current_user.address if current_user.is_authenticated and current_user.address else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Ghi chú (ví dụ: ít đường, nhiều trân châu, không đá)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title themed-heading mb-3">Tóm tắt đơn hàng</h4>
+                    <div class="order-summary bg-light p-3 rounded mb-3">
+                        <ul class="list-group list-group-flush" id="orderItemsSummary">
+                            {% for c in session['cart'].values() %}
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center py-2">
+                                <span>{{ c.name }} x {{ c.quantity }}</span>
+                                <span>{{ "{:,.0f}".format(c.price * c.quantity) }} VNĐ</span>
+                            </li>
+                            {% endfor %}
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center py-2">
+                                <span>Phí giao hàng:</span>
+                                <span class="fw-bold">Miễn phí</span>
+                            </li>
+                        </ul>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mt-3 fw-bold fs-5">
+                            <span>Tổng tiền thanh toán:</span>
+                            <span id="checkoutTotalAmount" class="themed-heading">{{ "{:,.0f}".format(cart.total_amount) }} VNĐ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title themed-heading mb-3">Chọn hình thức thanh toán</h4>
+                    <div class="payment-methods">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                            <label class="form-check-label" for="cod">
+                                Thanh toán khi nhận hàng (COD)
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer" value="BankTransfer">
+                            <label class="form-check-label" for="bankTransfer">
+                                Chuyển khoản ngân hàng (Thông tin sẽ hiển thị sau)
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="onlinePayment" value="OnlinePayment" disabled> {# Tạm thời vô hiệu hóa #}
+                            <label class="form-check-label" for="onlinePayment">
+                                Thanh toán Online (MoMo, ZaloPay, Thẻ...) - Sắp ra mắt!
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="placeOrderBtn" class="btn btn-primary btn-lg w-100">Xác nhận đặt hàng</button>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

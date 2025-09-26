@@ -1,0 +1,109 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Giỏ hàng của bạn{% endblock %}
+
+
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h1 class="text-center themed-heading mb-4">Giỏ hàng của bạn</h1>
+
+    {# Thông báo giỏ hàng (sẽ cần JS để hoạt động động) #}
+    <div id="cart-message" class="alert d-none text-center" role="alert"></div>
+
+    {% if 'cart' in session and session['cart'] %}
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+
+                                    <th scope="col">Tên sản phẩm</th>
+                                    <th scope="col" class="text-end">Giá</th>
+                                    <th scope="col" class="text-center">Số lượng</th>
+
+                                    <th scope="col"></th> {# Cột cho nút xóa #}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in session['cart'].values() %}
+                                <tr class="cart-item" id="cart{{ c.id }}"> {# Thêm ID cho hàng để JS có thể xóa #}
+
+                                    <td>
+                                        <div class="product-details">
+                                            <h5 class="card-title mb-0">{{ c.name }}</h5>
+                                            <p class="text-muted mb-0">Mã: {{ c.id }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="text-end price">{{ "{:,.0f}".format(c.price) }} VNĐ</td>
+                                    <td class="text-center">
+                                        <div class="input-group input-group-sm justify-content-center" style="max-width: 120px; margin: auto;">
+                                            {# Nút giảm số lượng #}
+                                            <button class="btn btn-outline-secondary decrease-quantity" type="button" onclick="validateAndUpdateCart('{{ c.id }}', this.nextElementSibling, -1)">-</button> {# Truyền input element và -1 để giảm #}
+                                            <input type="number" min="1" class="form-control text-center quantity-input"
+                                                   onblur="validateAndUpdateCart('{{ c.id }}', this)" value="{{ c.quantity }}" />
+                                            {# Nút tăng số lượng #}
+                                            <button class="btn btn-outline-secondary increase-quantity" type="button" onclick="validateAndUpdateCart('{{ c.id }}', this.previousElementSibling, 1)">+</button> {# Truyền input element và 1 để tăng #}
+                                        </div>
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <button class="btn btn-danger btn-sm delete-btn" onclick="deleteCart('{{ c.id }}')">
+                                            <i class="fa fa-trash"></i>Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title themed-heading">Tóm tắt giỏ hàng</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tổng sản phẩm:</span>
+                        {# Đảm bảo biến cart được truyền từ Flask và có total_quantity #}
+                        <span class="fw-bold cart-counter">{{ cart.total_quantity }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Phí vận chuyển:</span>
+                        <span class="fw-bold">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="fs-5 fw-bold">Tổng tiền:</span>
+                        {# Đảm bảo biến cart được truyền từ Flask và có total_amount #}
+                        <span class="fs-5 fw-bold themed-heading cart-amount">{{ "{:,.0f}".format(cart.total_amount) }} VNĐ</span>
+                    </div>
+                    <a href="/" class="btn btn-outline-secondary w-100 mb-2">Tiếp tục mua sắm</a>
+
+                    {% if current_user.is_authenticated %}
+                    <input type="button" value="Thanh toán" onclick="pay()" class="btn btn-primary w-100" />
+                    {% else %}
+                    <p class="text-center mt-3">Vui lòng <a href="/login" class="themed-heading">đăng nhập</a> để thanh toán!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4" role="alert">
+        Không có sản phẩm trong giỏ! Vui lòng thêm sản phẩm vào giỏ hàng.
+    </div>
+    <div class="text-center mt-3">
+        <a href="/" class="btn btn-primary">Tiếp tục mua sắm</a>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

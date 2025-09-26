@@ -1,0 +1,214 @@
+{% extends 'admin/master.html' %}
+
+{% block head %}
+    {{ super() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Tùy chỉnh chiều cao biểu đồ để responsive tốt hơn */
+        canvas {
+            max-height: 400px; /* Chiều cao tối đa cho biểu đồ */
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">Chào mừng đến Trang Thống Kê Trà Sữa OU</h2>
+    <p class="lead">Đây là nơi bạn có thể xem tổng quan về hoạt động kinh doanh của cửa hàng.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Tổng số Sản phẩm</h5>
+                    <p class="card-text fs-2 fw-bold">{{ num_products }}</p>
+                    <a href="{{ url_for('product.index_view') }}" class="btn btn-sm btn-outline-primary">Quản lý Sản phẩm</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Tổng số Đơn hàng</h5>
+                    <p class="card-text fs-2 fw-bold">{{ num_orders }}</p>
+                    <a href="{{ url_for('order.index_view') }}" class="btn btn-sm btn-outline-success">Xem Đơn hàng</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">Tổng Doanh thu</h5>
+                    <p class="card-text fs-2 fw-bold">{{ "{:,.0f} VNĐ".format(total_revenue) }}</p>
+                    <a href="#" class="btn btn-sm btn-outline-warning">Xem Báo cáo</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">Đơn hàng mới hôm nay</h5>
+                    <p class="card-text fs-2 fw-bold">{{ new_orders_today }}</p>
+                    <a href="{{ url_for('order.index_view', flt0_0=today_date_str) }}" class="btn btn-sm btn-outline-danger">Xem Đơn hàng hôm nay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Biểu đồ Thống kê cho năm {{ current_year }}</h3>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu theo tháng</h5>
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Số lượng Sản phẩm bán ra</h5>
+                    <canvas id="productSalesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Thông tin nhanh</h3>
+    <ul>
+        <li>Ngày hiện tại: <strong>{{ today_date_str }}</strong></li>
+        <li>Tài khoản đang đăng nhập: <strong>{{ current_user.name }} ({{ current_user.email }})</strong></li>
+        <li>Quyền hạn: <strong>{{ current_user.user_role.value }}</strong></li>
+    </ul>
+</div>
+
+<script>
+    // Dữ liệu từ Flask (đảm bảo | tojson được sử dụng để chuyển đổi sang JSON an toàn)
+    var monthlyLabels = {{ monthly_labels | tojson }};
+    var monthlyRevenues = {{ monthly_revenues | tojson }};
+
+    var productLabels = {{ product_labels | tojson }};
+    var productQuantities = {{ product_quantities | tojson }};
+
+    // --- Biểu đồ Doanh thu theo tháng (Bar Chart) ---
+    var ctxMonthly = document.getElementById('monthlyRevenueChart').getContext('2d');
+    var monthlyRevenueChart = new Chart(ctxMonthly, {
+        type: 'bar', // Có thể dùng 'line' cho biểu đồ đường
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: monthlyRevenues,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)', // Màu xanh dương
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Doanh thu (VNĐ)'
+                    },
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return value.toLocaleString('vi-VN') + ' VNĐ'; // Định dạng tiền tệ Việt Nam
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tháng'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // --- Biểu đồ Số lượng sản phẩm bán ra (Bar Chart) ---
+    var ctxProduct = document.getElementById('productSalesChart').getContext('2d');
+    var productSalesChart = new Chart(ctxProduct, {
+        type: 'bar', // Hoặc 'pie', 'doughnut'
+        data: {
+            labels: productLabels,
+            datasets: [{
+                label: 'Số lượng bán ra',
+                data: productQuantities,
+                backgroundColor: [ // Nhiều màu cho mỗi cột/miếng
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(199, 199, 199, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(199, 199, 199, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Số lượng'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            if (Number.isInteger(value)) {
+                                return value;
+                            }
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Sản phẩm'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

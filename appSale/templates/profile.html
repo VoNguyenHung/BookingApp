@@ -1,0 +1,172 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Thông tin cá nhân{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center themed-heading mb-4">Thông tin cá nhân</h1>
+
+    {# HIỂN THỊ THÔNG BÁO TỪ FLASH HOẶC TỪ ĐẦY TRUYỀN VÀO #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-center alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if success_msg %} {# Dành cho thông báo trực tiếp từ render_template #}
+    <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+        {{ success_msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    {% if err_msg %} {# Dành cho thông báo trực tiếp từ render_template #}
+    <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+        {{ err_msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if current_user.avatar %}
+                            <img src="{{ current_user.avatar }}"  alt="Avatar" width="150" height="150" style="object-fit: cover;">
+                        {% else %}
+                            <i class="fa fa-user-circle fa-5x text-muted mb-3"></i>
+                        {% endif %}
+                        <h3>{{ current_user.name }}</h3>
+                        <p class="text-muted">{{ current_user.email }}</p>
+                        <p class="text-muted">Số điện thoại: {{ current_user.phone if current_user.phone else 'Chưa có' }}</p>
+                        <p class="text-muted">Địa chỉ: {{ current_user.address if current_user.address else 'Chưa có' }}</p>
+                    </div>
+
+                    <h4>Cập nhật thông tin</h4>
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label for="new_name" class="form-label">Tên của bạn:</label>
+                            <input type="text" class="form-control" id="new_name" name="new_name" value="{{ current_user.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="new_email" name="new_email" value="{{ current_user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_phone" class="form-label">Số điện thoại:</label>
+                            <input type="tel" class="form-control" id="new_phone" name="new_phone" value="{{ current_user.phone if current_user.phone else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_address" class="form-label">Địa chỉ:</label>
+                            <input type="text" class="form-control" id="new_address" name="new_address" value="{{ current_user.address if current_user.address else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_avatar" class="form-label">Ảnh đại diện mới:</label>
+                            <input type="file" class="form-control" id="new_avatar" name="new_avatar" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn" >Cập nhật thông tin</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# PHẦN HIỂN THỊ LỊCH SỬ MUA HÀNG #}
+    <h2 class="text-center mt-5 mb-4 themed-heading">Lịch sử mua hàng</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {% if purchase_history %}
+                <ul class="list-group">
+                    {% for order in purchase_history %}
+                        <li class="list-group-item mb-3 shadow-sm">
+                            <h5 class="text-info">Đơn hàng #{{ order.id }} - Ngày: {{ order.order_date.strftime('%d/%m/%Y %H:%M') }}</h5>
+                            <p><strong>Trạng thái:</strong> <span class="badge bg-themed">{{ order.status }}</span></p> {# Changed to bg-themed #}
+                            <p><strong>Tổng tiền:</strong> {{ "{:,.0f} VNĐ".format(order.total_amount) }}</p>
+                            <p><strong>Địa chỉ giao hàng:</strong> {{ order.delivery_address }}</p>
+                            <p><strong>Phương thức thanh toán:</strong> {{ order.payment_method }} - <strong>Trạng thái:</strong> {{ order.payment_status }}</p>
+
+                            {% if order.items %}
+                                <h6>Sản phẩm:</h6>
+                                <ul class="list-group list-group-flush">
+                                    {% for item in order.items %}
+                                        <li class="list-group-item">
+                                            - {{ item.product.name }} (x{{ item.quantity }}) - {{ "{:,.0f} VNĐ".format(item.price_at_order) }} / sản phẩm
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">Đơn hàng không có sản phẩm nào.</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">Bạn chưa có đơn hàng nào.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#submitBtn').click(function(e) {
+        e.preventDefault(); // Ngăn chặn hành vi submit mặc định của form (nếu nút submit nằm trong form)
+
+        var newName = $('#new_name').val().trim();
+        var newEmail = $('#new_email').val().trim();
+        var newPhone = $('#new_phone').val().trim();
+        var newAddress = $('#new_address').val().trim(); // Đã sửa tên biến để nhất quán
+        var newAvatarFile = $('#new_avatar')[0].files[0]; // Lấy đối tượng File
+
+        // --- Cải thiện kiểm tra các trường bắt buộc ---
+        // Chỉ kiểm tra các trường text, file có thể không bắt buộc hoặc được kiểm tra riêng
+        if (newName === '' || newEmail === '' || newPhone === '') {
+            alert('Vui lòng điền đầy đủ Họ và tên, Email, và Số điện thoại!');
+            return; // Dừng hàm nếu thiếu thông tin
+        }
+
+        // --- Tạo đối tượng FormData để gửi dữ liệu và file ---
+        var formData = new FormData();
+        formData.append('new_name', newName);
+        formData.append('new_email', newEmail);
+        formData.append('new_phone', newPhone);
+        formData.append('new_address', newAddress); // Kể cả khi rỗng, vẫn gửi đi
+
+        if (newAvatarFile) { // Chỉ thêm file vào FormData nếu có file được chọn
+            formData.append('new_avatar', newAvatarFile);
+        }
+
+        // --- Gửi dữ liệu bằng AJAX ---
+        $.ajax({
+            url: '/edit_profile',
+            type: 'POST',
+            data: formData, // Truyền đối tượng FormData
+            processData: false, // Quan trọng: Ngăn jQuery xử lý dữ liệu
+            contentType: false, // Quan trọng: Ngăn jQuery đặt Content-Type
+            success: function(response) {
+                if (response.success) { // Kiểm tra thuộc tính 'success' từ Flask
+                    alert(response.message);
+                    $('#myModal').modal('hide'); // Đóng modal (nếu bạn dùng modal)
+                    location.reload(); // Tải lại trang để thấy thay đổi
+                } else {
+                    alert('Lỗi: ' + response.message); // Hiển thị thông báo lỗi từ Flask
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error, xhr);
+                var errorMessage = 'Đã xảy ra lỗi khi cập nhật thông tin.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = 'Lỗi: ' + xhr.responseJSON.message;
+                }
+                alert(errorMessage);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
